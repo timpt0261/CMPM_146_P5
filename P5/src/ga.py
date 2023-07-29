@@ -67,7 +67,7 @@ class Individual_Grid(object):
         # STUDENT implement a mutation operator, also consider not mutating this individual
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-
+        print(genome)
         left = 1
         right = width - 1
         for y in range(height):
@@ -347,6 +347,13 @@ def generate_successors(population):
     results = []
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
+    bias = math.ceil((random.randint(1, 25) / 100) * len(population)) 
+    elite_gen = sorted(population, key=lambda p: p._fitness, reverse=True)
+    elite_gen = elite_gen[::bias]
+    children = Individual_Grid.generate_children(elite_gen)
+    
+    
+    
     return results
 
 
