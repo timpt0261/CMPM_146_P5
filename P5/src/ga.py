@@ -113,11 +113,36 @@ class Individual_Grid(object):
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         g = [random.choices(options, k=width) for row in range(height)]
+        # set first four row to zero
+        for row in range(4):
+            g[row][:] = ["-"] * width
+            
+        for row in range(13):
+            g[row][1] = '-'
+        
         g[15][:] = ["X"] * width
         g[14][0] = "m"
         g[7][-1] = "v"
         g[8:14][-1] = ["f"] * 6
         g[14:16][-1] = ["X", "X"]
+
+
+        # Find the pipe tops and connect them to the solid wall below with pipe segments
+        for col in range(width):
+            for row in range(height - 2):
+                if g[row][col] == "T" and g[row + 2][col] == "X":
+                    g[row + 1][col] = "|"
+
+        # Replace the blocks from the pipe top to the solid wall below to create a pipe
+        for row in range(height):
+            for col in range(width):
+                    
+                if g[row][col] == "|":
+                    r = row
+                    while r < height and g[r][col] != "X":
+                        if g[r][col] != "|":
+                            g[r][col] = "|"
+                        r += 1
         return cls(g)
 
 
