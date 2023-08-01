@@ -169,7 +169,19 @@ class Individual_Grid(object):
                         r += 1
 
         # enemies should spawn 1 block above ? or x with empty space in between if 2
-        
+        for row in range(height):
+            for col in range(width):
+                    
+                if g[row][col] == "E":
+                    r = row
+                    r_search = row+1
+                    proceed = False
+                    while(r_search < row+2):
+                        if r_search<height and (g[r_search][col] == 'X' or g[r_search][col] == '?' or g[r_search][col] == 'M' or g[r_search][col] == 'B'):
+                            proceed = True
+                        r_search += 1
+                    if not proceed :
+                        g[row][col] = random.choice(["-", "X", "?", "M", "B", "o"])
          
                        
         return cls(g)
