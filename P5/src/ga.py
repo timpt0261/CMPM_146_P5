@@ -117,8 +117,8 @@ class Individual_Grid(object):
         for row in range(4):
             g[row][:] = ["-"] * width
             
-        for row in range(13):
-            g[row][1] = '-'
+        for row in range(14):
+            g[row][0] = '-'
         
         g[15][:] = ["X"] * width
         g[14][0] = "m"
@@ -127,34 +127,49 @@ class Individual_Grid(object):
         g[14:16][-1] = ["X", "X"]
 
 
-        # Find the pipe tops and connect them to the solid wall below with pipe segments
-        for col in range(width):
-            for row in range(height - 2):
-                if g[row][col] == "T" and g[row + 2][col] == "X":
-                    g[row + 1][col] = "|"
+        # # Find the pipe tops and connect them to the solid wall below with pipe segments
+        # for col in range(width):
+        #     for row in range(height - 2):
+        #         if g[row][col] == "T" and g[row + 2][col] == "X":
+        #             g[row + 1][col] = "|"
 
         # pipe segments need pipe tops on top of them
         for row in range(height):
             for col in range(width):
                     
-                if g[row][col] == "|":
+                if g[row][col] == "|" or g[row][col] == "T":
                     r = row
-                    if(g[r-1][col] != "|"):
-                        g[r-1][col] = "T"
+                    r_search = row+1
+                    proceed = False
+                    while(r_search < row+3):
+                        if r_search<height and g[r_search][col] == 'X':
+                            proceed = True
+                        r_search += 1
+                    if proceed :
+                        if(r>4):
+                            if(g[r-1][col] != "|"):
+                                g[r-1][col] = "T"
+                        else:
+                            if(g[r-1][col] != "|"):
+                                g[r][col] = "T"
+                    else:
+                        if(row != height-1):
+                            g[row][col] = random.choice(["-", "X", "?", "M", "B", "o", "E"])
 
         # Replace the blocks from the pipe top to the solid wall below to create a pipe
         for row in range(height):
             for col in range(width):
                     
-                if g[row][col] == "|":
+                if g[row][col] == "T":
                     r = row
+                    r += 1
                     while r < height and g[r][col] != "X":
                         if g[r][col] != "|":
                             g[r][col] = "|"
                         r += 1
 
-        # enemies should spawn 1 or 2 blocks above ? or x with empty space in between if 2
-
+        # enemies should spawn 1 block above ? or x with empty space in between if 2
+        
          
                        
         return cls(g)
