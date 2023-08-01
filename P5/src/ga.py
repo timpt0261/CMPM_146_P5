@@ -133,6 +133,15 @@ class Individual_Grid(object):
                 if g[row][col] == "T" and g[row + 2][col] == "X":
                     g[row + 1][col] = "|"
 
+        # pipe segments need pipe tops on top of them
+        for row in range(height):
+            for col in range(width):
+                    
+                if g[row][col] == "|":
+                    r = row
+                    if(g[r-1][col] != "|"):
+                        g[r-1][col] = "T"
+
         # Replace the blocks from the pipe top to the solid wall below to create a pipe
         for row in range(height):
             for col in range(width):
@@ -143,6 +152,11 @@ class Individual_Grid(object):
                         if g[r][col] != "|":
                             g[r][col] = "|"
                         r += 1
+
+        # enemies should spawn 1 or 2 blocks above ? or x with empty space in between if 2
+
+         
+                       
         return cls(g)
 
 
