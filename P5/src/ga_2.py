@@ -523,7 +523,7 @@ class Individual_DE(object):
         return Individual_DE(g)
 
 
-Individual = Individual_Grid
+Individual = Individual_DE
 
 
 def generate_successors(population):
@@ -531,7 +531,7 @@ def generate_successors(population):
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
 
-    # elite_gen = [gen for gen in population if gen.genome != []]
+    elite_gen = [gen for gen in population if gen.genome != []]
     num_of_elites = math.ceil((random.randint(1, 25) / 100) * len(elite_gen))
     elite_gen = sorted(elite_gen, key=lambda p: p._fitness,
                        reverse=True)[:num_of_elites]
