@@ -70,7 +70,7 @@ class Individual_Grid(object):
         left = 1
         right = width - 1
 
-        if 0.66 < random.random() and len(genome) == 16:
+        if random.random() < 0.1 and len(genome) == 16:
             mutation_type = random.choice(["cols", "rows", "positions"])
             if mutation_type == "cols":
                 num_cols = random.randint(1, width // 4)
@@ -82,13 +82,13 @@ class Individual_Grid(object):
                             if random.random() < .8:
                                 genome[y][x] = random.choice(options[:5])[0]
 
-                        elif block in ["-", "X", "?", "M", "B", "o"]:
+                        elif block in ["X", "?", "M", "B", "o"]:
                             shift_by = random.random()
                             y2 = clip(0, y + random.choice([-1, 1]), height-1)
                             x2 = clip(left, x + random.choice([-1, 1]), right)
                             if (shift_by < 0.25):
                                 genome[y][x] = random.choice(
-                                    ["-", "X", "?", "M", "B", "o"])[0]
+                                    ["X", "?", "M", "B", "o"])[0]
                             elif shift_by < 0.5:
                                 genome[y][x], genome[y][x2] = genome[y][x2], genome[y][x]
                             elif shift_by < 0.75:
@@ -115,13 +115,13 @@ class Individual_Grid(object):
                             if random.random() < .8:
                                 genome[y][x] = random.choice(options[:5])[0]
 
-                        elif block in ["-", "X", "?", "M", "B", "o"]:
+                        elif block in ["X", "?", "M", "B", "o"]:
                             shift_by = random.random()
                             y2 = clip(0, y + random.choice([-1, 1]), height-1)
                             x2 = clip(left, x + random.choice([-1, 1]), right)
                             if (shift_by < 0.25):
                                 genome[y][x] = random.choice(
-                                    ["-", "X", "?", "M", "B", "o"])[0]
+                                    ["X", "?", "M", "B", "o"])[0]
                             elif shift_by < 0.5:
                                 genome[y][x], genome[y][x2] = genome[y][x2], genome[y][x]
                             elif shift_by < 0.75:
@@ -149,13 +149,13 @@ class Individual_Grid(object):
                         if random.random() < .8:
                             genome[y][x] = random.choice(options[:5])[0]
 
-                    elif block in ["-", "X", "?", "M", "B", "o"]:
+                    elif block in ["X", "?", "M", "B", "o"]:
                         shift_by = random.random()
                         y2 = clip(0, y + random.choice([-1, 1]), height-1)
                         x2 = clip(left, x + random.choice([-1, 1]), right)
                         if (shift_by < 0.25):
                             genome[y][x] = random.choice(
-                                ["-", "X", "?", "M", "B", "o"])[0]
+                                ["X", "?", "M", "B", "o"])[0]
                         elif shift_by < 0.5:
                             genome[y][x], genome[y][x2] = genome[y][x2], genome[y][x]
                         elif shift_by < 0.75:
@@ -563,23 +563,32 @@ def generate_successors(population):
     results = []
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
+    selection_method = random.choices(["roulette",  "elitist"])[0]
+    if selection_method == "roulette":
+        # Roulette Selection
+        total_fitness = sum(gen._fitness for gen in population)
+        probabilities = [gen._fitness / total_fitness for gen in population]
 
-    elite_gen = [gen for gen in population if gen.genome != []]
-    num_of_elites = math.ceil((random.randint(1, 25) / 100) * len(elite_gen))
-    elite_gen = sorted(elite_gen, key=lambda p: p._fitness,
-                       reverse=True)[:num_of_elites]
-    results += elite_gen
+        for _ in range(len(population)):
+            selected_gen = random.choices(population, probabilities)[0]
+            results.append(selected_gen)
 
-    for child_self in elite_gen:
-        for child_other in elite_gen:
+    elif selection_method == "elitist":
+        # Elitist Selection
+        elite_gen = [gen for gen in population if gen.genome != []]
+        num_of_elites = math.ceil((random.randint(1, 25) / 100) * len(elite_gen))
+        elite_gen = sorted(elite_gen, key=lambda p: p._fitness, reverse=True)[:num_of_elites]
+        results += elite_gen
+
+    for child_self in results:
+        for child_other in results:
             if child_self == child_other:
                 continue
 
             if child_self == [] or child_other == []:
                 continue
 
-            child_1, child_2 = Individual.generate_children(
-                child_self, child_other)
+            child_1, child_2 = Individual.generate_children(child_self, child_other)
 
             if (len(results) < len(population)):
                 child_1 = Individual.calculate_fitness(child_1)
@@ -588,7 +597,6 @@ def generate_successors(population):
                 results.append(child_2)
 
     return results
-
 
 def ga():
     # STUDENT Feel free to play with this parameter
