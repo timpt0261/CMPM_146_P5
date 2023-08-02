@@ -155,13 +155,12 @@ class Individual_Grid(object):
 
         for y in range(height):
             for x in range(left, right):
-                # If the current position is a pipe top ("T"), copy the entire space of the pipe
                 if self[y][x] == "T" or other[y][x] == "T":
                     for h in range(y, 16):
                         new_genome_self[h][x] = other[h][x]
                         new_genome_other[h][x] = self[h][x]
                 else:
-                    # Perform uniform crossover based on probability P[y][x]
+
                     if P[y][x] < 0.5:
                         new_genome_self[y][x] = other[y][x]
                         new_genome_other[y][x] = self[y][x]
