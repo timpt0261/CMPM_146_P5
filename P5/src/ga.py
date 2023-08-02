@@ -70,7 +70,7 @@ class Individual_Grid(object):
         left = 1
         right = width - 1
 
-        if 0.1 < random.random() and len(genome) == 16:
+        if 0.66 < random.random() and len(genome) == 16:
             mutation_type = random.choice(["cols", "rows", "positions"])
             if mutation_type == "cols":
                 num_cols = random.randint(1, width // 4)
@@ -632,7 +632,7 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
-                stop_condition = False if generation < 100 else True
+                stop_condition = False if generation < 1000 else True
                 if stop_condition:
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
