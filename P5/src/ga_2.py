@@ -553,8 +553,6 @@ def generate_successors(population):
                 child_2 = Individual.calculate_fitness(child_2)
                 results.append(child_1)
                 results.append(child_2)
-            else:
-                break
 
     return results
 
@@ -575,9 +573,7 @@ def ga():
                       else Individual.empty_individual()
                       for _g in range(pop_limit)]
         # But leave this line alone; we have to reassign to population because we get a new population that has more cached stuff in it.
-        population = pool.map(Individual.calculate_fitness,
-                              population,
-                              batch_size)
+        population = pool.map(Individual.calculate_fitness, population, batch_size)
         init_done = time.time()
         print("Created and calculated initial population statistics in:",
               init_done - init_time, "seconds")
