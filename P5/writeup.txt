@@ -46,11 +46,8 @@ and randomly selects two crossover points (pa and pb) to perform the crossover. 
 and b_part from self to create a new genome gb. These two new genomes are the children generated from the crossover. The function also involves a mutation step by calling the `mutate` 
 function on both children to introduce further variability. The function returns two new individuals representing the children.
 
-3. The random_individual has bben modified to do the following where the generated level is initialized with a floor and walls. 
+3. The random_individual has been modified to do the following where the generated level is initialized with a floor and walls. 
 The function then randomly adds holes, pipes, stairs, platforms, enemies, and coins to the level, respecting certain constraints. 
 The number of each element (holes, pipes, stairs, platforms, enemies, and coins) is determined randomly 
 within predefined ranges. The function ensures that pipes are not created in the air, and it also considers weighting different tile types for variability. 
 
-Remember to do this:
-Improve the fitness function and mutation operator (and potentially crossover) in Individual_DE.
-It’s OK if it’s different from the Grid version; you may want to make assumptions ab
