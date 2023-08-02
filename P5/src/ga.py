@@ -416,7 +416,7 @@ def generate_successors(population):
     bias = math.ceil((random.randint(1, 25) / 100) * len(population)) 
     elite_gen = sorted(population, key=lambda p: p._fitness, reverse=True)
     elite_gen = elite_gen[::bias]
-    children = Individual_Grid.generate_children(elite_gen)
+    children = Individual.generate_children(elite_gen, )
     
     
     
