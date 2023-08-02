@@ -67,28 +67,107 @@ class Individual_Grid(object):
         # STUDENT implement a mutation operator, also consider not mutating this individual
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-        print(genome)
-        left = 1
-        right = width - 1
-        for y in range(height):
-            for x in range(left, right):
-                pass
+        # left = 1
+        # right = width - 1
+
+        # if random.random() < 0.1:
+        #     mutation_type = random.choice(["cols", "rows", "positions"])
+        #     if mutation_type == "cols":
+        #         num_cols = random.randint(1, width // 4)
+        #         cols_to_mutate = random.sample(range(left, right), num_cols)
+        #         for y in range(height):
+        #             for x in cols_to_mutate:
+        #                 block = genome[y][x]
+        #                 if block == '-':
+        #                     if left <= x - 1 and x + 1 >= right and y in range(4, 13):
+        #                         genome[y][x] = random.choice(options[:5])
+        #                     else:
+        #                         # shift block
+        #                         genome[y][x], genome[y][x + random.choice([-1, 1])] = genome[y][x + random.choice([-1, 1])], genome[y][x]
+        #                 elif block in ["X", "?", "M", "B", "o"]:
+        #                     genome[y][x] = random.choice(["-", "X", "?", "M", "B", "o"])
+        #                 elif genome[y][x] == '|':
+        #                     pass
+        #                 elif genome[y][x] == "T":
+        #                     y1 = random.randint(4, 13)
+        #                     height_diff = abs(y - y1)
+        #                     for h in range(min(y, y1), max(y, y1)):
+        #                         genome[h][x] = "|"
+        #                 elif genome[y][x] == "E":
+        #                     # Enemy has the option of being replaced or not
+        #                     if random.random() < 0.5:
+        #                         genome[y][x] = random.choice(["-", "E"])
+
+        #     elif mutation_type == "rows":
+        #         num_rows = random.randint(1, height // 4)
+        #         rows_to_mutate = random.sample(range(4, 13), num_rows)
+        #         for y in rows_to_mutate:
+        #             for x in range(left, right):
+        #                 block = genome[y][x]
+        #                 if block == '-':
+        #                     genome[y][x], genome[y + random.choice([-1, 1])][x] = genome[y + random.choice([-1, 1])][x], genome[y][x]
+        #                 elif block in ["X", "?", "M", "B", "o"]:
+        #                     genome[y][x] = random.choice(["-", "X", "?", "M", "B", "o"])
+        #                 elif genome[y][x] == '|':
+        #                     pass
+        #                 elif genome[y][x] == "T":
+        #                     y1 = random.randint(4, 13)
+        #                     height_diff = abs(y - y1)
+        #                     for h in range(min(y, y1), max(y, y1)):
+        #                         genome[h][x] = "|"
+        #                 elif genome[y][x] == "E":
+        #                     if random.random() < 0.5:
+        #                         genome[y][x] = random.choice(["-", "E"])
+
+        #     elif mutation_type == "positions":
+        #         num_positions = random.randint(1, width * height // 4)
+        #         positions_to_mutate = random.sample([(y, x) for y in range(height) for x in range(left, right)], num_positions)
+        #         for y, x in positions_to_mutate:
+        #             block = genome[y][x]
+        #             if block == '-':
+        #                 genome[y][x], genome[y + random.choice([-1, 1])][x + random.choice([-1, 1])] = genome[y + random.choice([-1, 1])][x + random.choice([-1, 1])], genome[y][x]
+        #             elif block in ["X", "?", "M", "B", "o"]:
+        #                 genome[y][x] = random.choice(["-", "X", "?", "M", "B", "o"])
+        #             elif genome[y][x] == '|':
+        #                 pass
+        #             elif genome[y][x] == "T":
+        #                 y1 = random.randint(4, 13)
+        #                 height_diff = abs(y - y1)
+        #                 for h in range(min(y, y1), max(y, y1)):
+        #                     genome[h][x] = "|"
+        #             elif genome[y][x] == "E":
+        #                 if random.random() < 0.5:
+        #                     genome[y][x] = random.choice(["-", "E"])
+
         return genome
+
 
     # Create zero or more children from self and other
     def generate_children(self, other):
-        new_genome = copy.deepcopy(self.genome)
+        new_genome_self = copy.deepcopy(self.genome)
+        new_genome_other = copy.deepcopy(other.genome)
+
         # Leaving first and last columns alone...
         # do crossover with other
         left = 1
         right = width - 1
+        P = [[random.random() for _ in range(left, right)] for _ in range(height)]
+
         for y in range(height):
             for x in range(left, right):
-                # STUDENT Which one should you take?  Self, or other?  Why?
-                # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                pass
-        # do mutation; note we're returning a one-element tuple here
-        return (Individual_Grid(new_genome),)
+                if self[y][x] == "T" or other[y][x] == "T":
+                    for h in range(y, 16):
+                        new_genome_self[h][x] = other[h][x]
+                        new_genome_other[h][x] = self[h][x]
+                else:
+
+                    if P[y][x] < 0.5:
+                        new_genome_self[y][x] = other[y][x]
+                        new_genome_other[y][x] = self[y][x]
+
+        # Perform mutation; note we're returning a one-element tuple here
+        return (Individual_Grid(self.mutate(new_genome_self)), Individual_Grid(self.mutate(new_genome_other)))
+
 
     # Turn the genome into a level string (easy for this genome)
     def to_level(self):
@@ -112,13 +191,13 @@ class Individual_Grid(object):
     def random_individual(cls):
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
         # STUDENT also consider weighting the different tile types so it's not uniformly random
-        g = [random.choices(options, k=width) for row in range(height)]
+        g = [["-" for col in range(width)] for row in range(height)]
         # set first four row to zero
         for row in range(4):
             g[row][:] = ["-"] * width
             
-        for row in range(14):
-            g[row][0] = '-'
+        for row in range(13):
+            g[row][1] = '-'
         
         g[15][:] = ["X"] * width
         g[14][0] = "m"
@@ -127,63 +206,22 @@ class Individual_Grid(object):
         g[14:16][-1] = ["X", "X"]
 
 
-        # # Find the pipe tops and connect them to the solid wall below with pipe segments
-        # for col in range(width):
-        #     for row in range(height - 2):
-        #         if g[row][col] == "T" and g[row + 2][col] == "X":
-        #             g[row + 1][col] = "|"
-
-        # pipe segments need pipe tops on top of them
-        for row in range(height):
-            for col in range(width):
-                    
-                if g[row][col] == "|" or g[row][col] == "T":
-                    r = row
-                    r_search = row+1
-                    proceed = False
-                    while(r_search < row+3):
-                        if r_search<height and g[r_search][col] == 'X':
-                            proceed = True
-                        r_search += 1
-                    if proceed :
-                        if(r>4):
-                            if(g[r-1][col] != "|"):
-                                g[r-1][col] = "T"
-                        else:
-                            if(g[r-1][col] != "|"):
-                                g[r][col] = "T"
-                    else:
-                        if(row != height-1):
-                            g[row][col] = random.choice(["-", "X", "?", "M", "B", "o", "E"])
+        # Find the pipe tops and connect them to the solid wall below with pipe segments
+        for col in range(width):
+            for row in range(height - 2):
+                if g[row][col] == "T" and g[row + 2][col] == "X":
+                    g[row + 1][col] = "|"
 
         # Replace the blocks from the pipe top to the solid wall below to create a pipe
         for row in range(height):
             for col in range(width):
                     
-                if g[row][col] == "T":
+                if g[row][col] == "|":
                     r = row
-                    r += 1
                     while r < height and g[r][col] != "X":
                         if g[r][col] != "|":
                             g[r][col] = "|"
                         r += 1
-
-        # enemies should spawn 1 block above ? or x with empty space in between if 2
-        for row in range(height):
-            for col in range(width):
-                    
-                if g[row][col] == "E":
-                    r = row
-                    r_search = row+1
-                    proceed = False
-                    while(r_search < row+2):
-                        if r_search<height and (g[r_search][col] == 'X' or g[r_search][col] == '?' or g[r_search][col] == 'M' or g[r_search][col] == 'B'):
-                            proceed = True
-                        r_search += 1
-                    if not proceed :
-                        g[row][col] = random.choice(["-", "X", "?", "M", "B", "o"])
-         
-                       
         return cls(g)
 
 
@@ -413,13 +451,30 @@ def generate_successors(population):
     results = []
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
-    bias = math.ceil((random.randint(1, 25) / 100) * len(population)) 
-    elite_gen = sorted(population, key=lambda p: p._fitness, reverse=True)
-    elite_gen = elite_gen[::bias]
-    children = Individual_Grid.generate_children(elite_gen)
-    
-    
-    
+
+    elite_gen = [gen for gen in population if gen.genome != []]
+    num_of_elites = math.ceil((random.randint(1, 25) / 100) * len(elite_gen))
+    elite_gen = sorted(elite_gen, key=lambda p: p._fitness,
+                       reverse=True)[:num_of_elites]
+    results += elite_gen
+
+    for child_self in elite_gen:
+        for child_other in elite_gen:
+            if child_self == child_other:
+                continue
+
+            if child_self == [] or child_other == []:
+                continue
+
+            child_1, child_2 = Individual.generate_children(
+                child_self, child_other)
+
+            if (len(results) < len(population)):
+                child_1 = Individual.calculate_fitness(child_1)
+                child_2 = Individual.calculate_fitness(child_2)
+                results.append(child_1)
+                results.append(child_2)
+
     return results
 
 
