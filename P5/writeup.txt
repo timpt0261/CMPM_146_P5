@@ -26,9 +26,15 @@ Writeup Part 2
 crossover and mutation functions, with a diagram if possible.
 
 Selection Strategy:
-Single point crossover: generate_children picks a singular point where both genomes swap. 
+DE Single point crossover: generate_children picks a singular point where both genomes swap. 
 
-
+DE Mutation: The chance of the mutation is very unlikely, it will only mutate if a random number btwn 0 to 1 is less then 0.1 so around 10% mutation chance. 
+After that (if it mutates) it chooses a random number between 0 to (length of genome minus 1). Choosing a specific part of the genome.
+It stores certain types of patterns, ie. where enemies, stairs, pipes, etc. will be placed 
+Genome is an array of design patterns.
+Depending on which design patterns is chosen it shifts where the pattern will be placed respectively to where it already was.
+ie. a the coin design pattern will change the x,y position or for stairs and pipes the height will be changed, and for platform it will also mutate 
+how wide it is and x,y position it can also change what blocks it is made out of. 
 
 
 
